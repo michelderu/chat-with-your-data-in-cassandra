@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+
+  # DataStax Enterprise with Vector Search
+  # Just one node for prototyping purposes
+  seed_node:
+    image: "datastax/dse-server:7.0.0-alpha.4"
+    environment:
+      - DS_LICENSE=accept
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=512M
+    cap_add:
+      - IPC_LOCK
+    ulimits:
+      memlock: -1
+    volumes:
+      - ./cassandra:/var/lib/cassandra
+    ports:
+      - 9042:9042
+      
+  # Jupyter Notebook
+  jupyter:
+    image: jupyter/base-notebook:latest
+    volumes:
+      - ./:/home
+    ports:
+      - 8888:8888
+    container_name: jupyter_notebook
+    command: "start-notebook.sh --NotebookApp.token="
